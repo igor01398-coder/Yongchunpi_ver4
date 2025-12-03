@@ -61,7 +61,7 @@ export const PuzzleCard: React.FC<PuzzleCardProps> = ({ puzzle, onSelect }) => {
                 <span>Target Profile Identified</span>
             </div>
             <span className="text-[10px] text-slate-400 font-mono group-hover:text-teal-500 transition-colors">
-                Click to Initialize >>
+                Click to Initialize &gt;&gt;
             </span>
           </div>
       </div>

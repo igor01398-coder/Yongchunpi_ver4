@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Puzzle, AppView, PlayerStats, PuzzleProgress } from './types';
 import { ImageEditor } from './components/ImageEditor';
@@ -974,8 +975,8 @@ const App: React.FC = () => {
                                     
                                     {collectedFragments.length === 3 && (
                                         <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded text-amber-800 text-sm font-mono animate-pulse shadow-sm">
-                                            >> COMPLETE DATASET ACQUIRED. 
-                                            <br/>>> HISTORICAL RECONSTRUCTION AVAILABLE.
+                                            &gt;&gt; COMPLETE DATASET ACQUIRED. 
+                                            <br/>&gt;&gt; HISTORICAL RECONSTRUCTION AVAILABLE.
                                         </div>
                                     )}
                                 </div>
