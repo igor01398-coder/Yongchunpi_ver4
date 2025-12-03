@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Puzzle } from '../types';
-import { Navigation, Globe, Map as MapIcon, Layers, Play, X, MapPin, MousePointerClick, Lock, Unlock } from 'lucide-react';
+import { Navigation, Globe, Map as MapIcon, Layers, Play } from 'lucide-react';
 
 // Declare Leaflet types since we are loading it via script tag
 declare global {
@@ -330,6 +330,16 @@ export const GameMap: React.FC<GameMapProps> = ({ puzzles, onPuzzleSelect, fogEn
             } else {
                 accuracyCircleRef.current.setLatLng([lat, lng]);
                 accuracyCircleRef.current.setRadius(accuracy);
+                // Ensure visibility if it was removed previously
+                if (!mapInstanceRef.current.hasLayer(accuracyCircleRef.current)) {
+                    accuracyCircleRef.current.addTo(mapInstanceRef.current);
+                }
+            }
+        } else {
+            // Remove circle if accuracy is missing
+            if (accuracyCircleRef.current) {
+                mapInstanceRef.current.removeLayer(accuracyCircleRef.current);
+                accuracyCircleRef.current = null;
             }
         }
 
