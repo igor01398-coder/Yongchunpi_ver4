@@ -1,7 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { editImageWithGemini, fileToGenerativePart, validateImage } from '../services/geminiService';
-// FIX: Use relative path
 import { playSfx } from '../services/audioService';
 import { Loader2, ArrowLeft, Upload, Camera, RefreshCw, Terminal, ChevronRight, CheckCircle, HelpCircle, AlertTriangle, ClipboardList, PartyPopper, Image as ImageIcon, ShieldCheck, Check, X, FolderOpen, ExternalLink, ScanSearch, Lightbulb } from 'lucide-react';
 import { Puzzle, PuzzleProgress } from '../types';
