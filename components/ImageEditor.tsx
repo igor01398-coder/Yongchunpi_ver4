@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { editImageWithGemini, fileToGenerativePart, validateImage } from '../services/geminiService';
 import { playSfx } from '../services/audioService';
-import { Loader2, ArrowLeft, Upload, Camera, RefreshCw, Terminal, ChevronRight, CheckCircle, HelpCircle, AlertTriangle, ClipboardList, PartyPopper, Image as ImageIcon, ShieldCheck, Check, X, FolderOpen, ExternalLink, ScanSearch, Lightbulb } from 'lucide-react';
+import { Loader2, ArrowLeft, Upload, Camera, RefreshCw, Terminal, CheckCircle, HelpCircle, AlertTriangle, ClipboardList, PartyPopper, Image as ImageIcon, Check, X, ExternalLink, ScanSearch, Lightbulb } from 'lucide-react';
 import { Puzzle, PuzzleProgress } from '../types';
 
 interface ImageEditorProps {
@@ -51,7 +51,6 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Define which missions are "Photo Analysis" style (Upload -> Validate -> Complete, No AI Gen)
-  // This now includes Mission 2, Mission 3, and all Side Missions.
   const isPhotoAnalysisMission = activePuzzle?.id === '2' || activePuzzle?.id === '3' || activePuzzle?.type === 'side';
 
   // Set default prompt hint when puzzle loads
@@ -774,6 +773,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
             </div>
             </div>
         )}
+      </div>
 
          {/* Success Modal */}
          {showSuccessModal && (
