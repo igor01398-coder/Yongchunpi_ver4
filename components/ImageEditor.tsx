@@ -729,8 +729,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                              </div>
                          )}
 
-                         {/* Prompt/Note Input Area */}
-                         {!isCompleted && (
+                         {/* Prompt/Note Input Area - Visible for Analysis Missions even after complete */}
+                         {(!isCompleted || isPhotoAnalysisMission) && (
                              <div className="space-y-2">
                                 <label className="text-xs font-mono text-slate-500">
                                     {isPhotoAnalysisMission ? "FIELD NOTES (MEMO)" : "AUGMENTATION PROMPT"}
@@ -740,11 +740,12 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                                         type="text" 
                                         value={prompt}
                                         onChange={(e) => setPrompt(e.target.value)}
-                                        className={`bg-white border border-slate-300 rounded px-3 py-2 text-sm font-mono focus:border-teal-500 focus:outline-none shadow-sm ${isPhotoAnalysisMission ? 'w-full' : 'flex-1'}`}
+                                        className={`bg-white border border-slate-300 rounded px-3 py-2 text-sm font-mono focus:border-teal-500 focus:outline-none shadow-sm ${isPhotoAnalysisMission ? 'w-full' : 'flex-1'} disabled:bg-slate-100 disabled:text-slate-600 disabled:font-bold`}
                                         placeholder={isPhotoAnalysisMission ? "Record your observations here (optional)..." : "Enter visualization parameters..."}
+                                        disabled={isCompleted}
                                     />
                                     {/* Execute button only for non-photo-analysis missions */}
-                                    {!isPhotoAnalysisMission && (
+                                    {!isPhotoAnalysisMission && !isCompleted && (
                                         <button 
                                             onClick={handleValidateAndGenerate}
                                             disabled={loading || (!prompt)}
