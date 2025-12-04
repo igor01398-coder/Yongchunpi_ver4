@@ -343,21 +343,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                 </button>
             )}
             
-            {/* Special Hint Button for Mission 3 (External Link) */}
-            {activePuzzle?.id === '3' && (
-                 <a 
-                    href="https://drive.google.com/file/d/1XjI4JsPsBlYo5uo_e4TePtDssbcQOYr6/view?usp=sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 hover:bg-amber-50 rounded-lg border border-amber-200 text-amber-600 shadow-sm transition-colors flex items-center justify-center"
-                    title="開啟提示"
-                >
-                    <Lightbulb className="w-5 h-5" />
-                </a>
-            )}
-            
-            {/* Reference Image Button (if available AND NOT Mission 3) */}
-            {activePuzzle?.referenceImage && activePuzzle.id !== '3' && (
+            {/* Reference Image Button (if available) */}
+            {activePuzzle?.referenceImage && (
                 <button 
                     onClick={() => setShowReferenceImage(true)}
                     className="p-2 hover:bg-amber-50 rounded-lg border border-amber-200 text-amber-600 shadow-sm transition-colors"
