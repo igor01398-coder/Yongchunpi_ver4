@@ -51,7 +51,9 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isMission2 = activePuzzle?.id === '2';
+  // Group Mission 2, Mission 3, and Side Missions as "Photo Analysis" types
+  // These use a single-column layout and skip the AI generation step (only validation)
+  const isPhotoAnalysis = activePuzzle ? (activePuzzle.id === '2' || activePuzzle.id === '3' || activePuzzle.type === 'side') : false;
 
   // Set default prompt hint when puzzle loads
   useEffect(() => {
@@ -252,14 +254,14 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
 
         playSfx('success');
         
-        // Mission 2 Logic: If valid, award XP immediately and STOP (no generation)
-        if (activePuzzle.id === '2' && validation.isValid) {
+        // Photo Analysis Logic (M2, M3, Side): If valid, award XP immediately and STOP (no generation)
+        if (isPhotoAnalysis && validation.isValid) {
             if (onFieldSolved) onFieldSolved();
             return;
         }
         
-        // 2. Generation/Editing Step (only if valid, and NOT Mission 2)
-        if (prompt && activePuzzle.id !== '2') {
+        // 2. Generation/Editing Step (only if valid, and NOT Photo Analysis)
+        if (prompt && !isPhotoAnalysis) {
              const resultBase64 = await editImageWithGemini(originalImage, prompt);
              setResultImage(resultBase64);
         }
@@ -337,15 +339,27 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                 </button>
             )}
             
-            {/* Reference Image Button (if available) */}
-            {activePuzzle?.referenceImage && (
-                <button 
-                    onClick={() => setShowReferenceImage(true)}
+            {/* Reference Image Button (if available) - Special handling for Mission 3 */}
+            {activePuzzle?.id === '3' ? (
+                 <a 
+                    href="https://drive.google.com/file/d/1XjI4JsPsBlYo5uo_e4TePtDssbcQOYr6/view?usp=sharing"
+                    target="_blank" 
+                    rel="noopener noreferrer"
                     className="p-2 hover:bg-amber-50 rounded-lg border border-amber-200 text-amber-600 shadow-sm transition-colors"
-                    title="View Reference"
-                >
-                    <ImageIcon className="w-5 h-5" />
-                </button>
+                    title="View Hint"
+                 >
+                    <Lightbulb className="w-5 h-5" />
+                 </a>
+            ) : (
+                activePuzzle?.referenceImage && (
+                    <button 
+                        onClick={() => setShowReferenceImage(true)}
+                        className="p-2 hover:bg-amber-50 rounded-lg border border-amber-200 text-amber-600 shadow-sm transition-colors"
+                        title="View Reference"
+                    >
+                        <ImageIcon className="w-5 h-5" />
+                    </button>
+                )
             )}
         </div>
       </div>
@@ -583,8 +597,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
             </div>
         )}
 
-        {/* Image Area - Unconditionally shown for Mission 2, conditional for others */}
-        {(activePuzzle?.id === '2' || (isQuizSolved && activePuzzle?.id !== '1')) && (
+        {/* Image Area - Unconditionally shown for Photo Analysis missions, conditional for others */}
+        {(activePuzzle && (isPhotoAnalysis || (isQuizSolved && activePuzzle?.id !== '1'))) && (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-forwards">
                 
                 {/* Secondary Instruction (If exists) */}
@@ -592,7 +606,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                     <div className={`border-l-2 p-4 rounded-r ${activePuzzle.type === 'side' ? 'bg-indigo-50 border-indigo-500' : 'bg-amber-50 border-amber-500'}`}>
                          <h4 className={`font-bold text-sm mb-1 font-mono flex items-center gap-2 ${activePuzzle.type === 'side' ? 'text-indigo-600' : 'text-amber-700'}`}>
                             <ImageIcon className="w-4 h-4" /> 
-                            {activePuzzle.id === '2' ? 'Question 2: Geological Analysis' : 'IMAGE REQUIRED'}
+                            {isPhotoAnalysis ? 'Question 2: Photo Analysis' : 'IMAGE REQUIRED'}
                          </h4>
                          <p className="text-sm text-slate-700">{activePuzzle.uploadInstruction}</p>
                     </div>
@@ -630,8 +644,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                 ) : (
                     <div className="w-full space-y-4">
                          {/* If resultImage is null (e.g. manual confirm), make original image bigger. Else show grid. 
-                             Mission 2 specific: Force single column to hide result image. */}
-                         <div className={`grid ${(resultImage || loading) && !isMission2 ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+                             Photo Analysis specific: Force single column to hide result image. */}
+                         <div className={`grid ${(resultImage || loading) && !isPhotoAnalysis ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
                             <div className="relative group">
                                 <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded font-mono backdrop-blur-sm z-10">ORIGINAL</div>
                                 <img 
@@ -649,8 +663,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                                     </button>
                                 )}
                                 
-                                {/* Loading Overlay for Mission 2 (since result column is hidden) */}
-                                {loading && isMission2 && (
+                                {/* Loading Overlay for Photo Analysis (since result column is hidden) */}
+                                {loading && isPhotoAnalysis && (
                                     <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-[2px] flex flex-col items-center justify-center rounded z-20">
                                         <Loader2 className="w-10 h-10 text-white animate-spin drop-shadow-md" />
                                         <span className="text-white font-mono text-xs font-bold mt-2 drop-shadow-md">ANALYZING...</span>
@@ -658,8 +672,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                                 )}
                             </div>
                             
-                            {/* Result Image or Loading State - Hidden for Mission 2 */}
-                            {((loading || resultImage) && !isMission2) && (
+                            {/* Result Image or Loading State - Hidden for Photo Analysis */}
+                            {((loading || resultImage) && !isPhotoAnalysis) && (
                                 <div className="relative">
                                     <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded font-mono backdrop-blur-sm z-10">ANALYSIS</div>
                                     {loading ? (
@@ -680,8 +694,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                             )}
                          </div>
 
-                         {/* Mission 2: Verify Button placed immediately below image */}
-                         {isMission2 && !isCompleted && !validationResult?.isValid && (
+                         {/* Photo Analysis: Verify Button placed immediately below image */}
+                         {isPhotoAnalysis && !isCompleted && !validationResult?.isValid && (
                              <button 
                                 onClick={handleValidateAndGenerate}
                                 disabled={loading}
@@ -711,33 +725,32 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ activePuzzle, onBack, 
                              </div>
                          )}
 
-                         {/* Prompt Input Area */}
-                         {!isCompleted && (
-                             <div className="space-y-2">
-                                <label className="text-xs font-mono text-slate-500">
-                                    {isMission2 ? "FIELD NOTES (MEMO)" : "AUGMENTATION PROMPT"}
-                                </label>
-                                <div className="flex gap-2">
-                                    <input 
-                                        type="text" 
-                                        value={prompt}
-                                        onChange={(e) => setPrompt(e.target.value)}
-                                        className={`bg-white border border-slate-300 rounded px-3 py-2 text-sm font-mono focus:border-teal-500 focus:outline-none shadow-sm ${isMission2 ? 'w-full' : 'flex-1'}`}
-                                        placeholder={isMission2 ? "Record your observations here (optional)..." : "Enter visualization parameters..."}
-                                    />
-                                    {!isMission2 && (
-                                        <button 
-                                            onClick={handleValidateAndGenerate}
-                                            disabled={loading || (!prompt && !isMission2)}
-                                            className="bg-slate-800 hover:bg-slate-700 disabled:bg-slate-300 text-white px-4 py-2 rounded font-mono font-bold text-xs flex items-center gap-2 transition-all shadow-sm"
-                                        >
-                                            {loading ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Terminal className="w-3 h-3" />}
-                                            EXECUTE
-                                        </button>
-                                    )}
-                                </div>
-                             </div>
-                         )}
+                         {/* Prompt/Notes Input Area (Always visible, readonly if completed) */}
+                         <div className="space-y-2">
+                            <label className="text-xs font-mono text-slate-500">
+                                {isPhotoAnalysis ? "FIELD NOTES (MEMO)" : "AUGMENTATION PROMPT"}
+                            </label>
+                            <div className="flex gap-2">
+                                <input 
+                                    type="text" 
+                                    value={prompt}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                    className={`bg-white border text-slate-900 border-slate-300 rounded px-3 py-2 text-sm font-mono focus:border-teal-500 focus:outline-none shadow-sm ${isPhotoAnalysis ? 'w-full' : 'flex-1'} disabled:bg-slate-100 disabled:text-slate-600 disabled:font-bold`}
+                                    placeholder={isPhotoAnalysis ? "Record your observations here (optional)..." : "Enter visualization parameters..."}
+                                    disabled={isCompleted}
+                                />
+                                {!isPhotoAnalysis && !isCompleted && (
+                                    <button 
+                                        onClick={handleValidateAndGenerate}
+                                        disabled={loading || !prompt}
+                                        className="bg-slate-800 hover:bg-slate-700 disabled:bg-slate-300 text-white px-4 py-2 rounded font-mono font-bold text-xs flex items-center gap-2 transition-all shadow-sm"
+                                    >
+                                        {loading ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Terminal className="w-3 h-3" />}
+                                        EXECUTE
+                                    </button>
+                                )}
+                            </div>
+                         </div>
                          
                          {/* Complete Button (Only if valid or bypassed) */}
                          {!isCompleted && validationResult?.isValid && (
