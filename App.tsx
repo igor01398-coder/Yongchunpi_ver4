@@ -7,9 +7,10 @@ import { IntroScreen } from './components/IntroScreen';
 import { EncyclopediaModal } from './components/EncyclopediaModal';
 import { PlayerProfileModal } from './components/PlayerProfileModal';
 import { SettingsModal } from './components/SettingsModal';
+import { WeatherWidget } from './components/WeatherWidget';
 // FIX: Use relative path
 import { playSfx, setSfxEnabled } from './services/audioService';
-import { User, Satellite, LifeBuoy, BookOpen, X, Mountain, Info, ClipboardList, ChevronRight, CloudFog, MapPin, CheckCircle, AlertTriangle, Book, Clock, RotateCcw, Settings, Lock } from 'lucide-react';
+import { User, Satellite, LifeBuoy, BookOpen, X, Mountain, Info, ClipboardList, ChevronRight, CloudFog, MapPin, CheckCircle, AlertTriangle, Book, Clock, RotateCcw, Settings, Lock, ExternalLink, Trophy } from 'lucide-react';
 
 // Updated Puzzles with Real Coordinates around Yongchun Pi Wetland Park (Taipei)
 const SAMPLE_PUZZLES: Puzzle[] = [
@@ -109,9 +110,6 @@ const INITIAL_STATS: PlayerStats = {
   maxMana: 100,
   sosCount: 1
 };
-
-// Yongchun Pi Map - Unlocked after 3 fragments
-const TREASURE_MAP_IMAGE = "https://drive.google.com/uc?export=view&id=1Gs8D2-eMawBA3iUWerCwiDhBlbmlOQ-e";
 
 const TUTORIAL_STEPS = [
     {
@@ -607,6 +605,9 @@ const App: React.FC = () => {
                                     {gpsStatus === 'locked' ? `GPS LOCKED ${gpsAccuracy ? `±${Math.round(gpsAccuracy)}m` : ''}` : gpsStatus === 'error' ? 'GPS OFFLINE' : 'SEARCHING...'}
                                 </span>
                             </button>
+
+                            {/* Weather Widget */}
+                            <WeatherWidget />
                             
                             {/* Real Clock */}
                             <div className="backdrop-blur bg-white/90 border border-slate-200 px-3 py-1 rounded-full shadow-sm flex items-center gap-2">
@@ -895,7 +896,7 @@ const App: React.FC = () => {
             {/* Treasure Map / Fragments Modal */}
             {showTreasureMap && (
                 <div className="absolute inset-0 z-[1000] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 animate-in zoom-in-95 duration-300">
-                    <div className="w-full max-w-2xl bg-white border border-amber-200 rounded-lg overflow-hidden flex flex-col max-h-[80vh] shadow-2xl">
+                    <div className="w-full max-w-lg bg-white border border-amber-200 rounded-lg overflow-hidden flex flex-col max-h-[80vh] shadow-2xl">
                          <div className="p-4 border-b border-amber-100 flex justify-between items-start bg-amber-50">
                             <div>
                                 <h2 className="text-lg font-bold font-mono text-amber-700 flex items-center gap-2">
@@ -909,77 +910,77 @@ const App: React.FC = () => {
                          </div>
                          
                          <div className="flex-1 overflow-y-auto p-6 bg-white">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* The Map Image with Overlay */}
-                                <div className="relative aspect-square bg-white rounded-lg border-2 border-slate-200 overflow-hidden group shadow-inner">
-                                    {/* Grayscale filter until completed */}
-                                    <img 
-                                        src={TREASURE_MAP_IMAGE} 
-                                        alt="Yongchun Pi Map" 
-                                        className={`w-full h-full object-contain transition-all duration-1000 ${collectedFragments.length === 3 ? 'grayscale-0' : 'grayscale opacity-50 blur-[4px]'}`} 
-                                    />
-                                    
-                                    {collectedFragments.length < 3 && (
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="bg-white/80 p-4 rounded backdrop-blur-sm text-center border border-slate-300 shadow-lg">
-                                                <Lock className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                                                <p className="text-xs font-mono text-slate-500">DATA FRAGMENTED</p>
-                                                <p className="text-xl font-bold text-slate-800 font-mono">{collectedFragments.length} / 3</p>
-                                            </div>
+                            <div className="space-y-6">
+                                <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+                                    <h3 className="text-teal-700 font-mono text-sm">碎片紀錄 (DATA FRAGMENTS)</h3>
+                                    {endTime && (
+                                        <div className="text-[10px] font-mono bg-amber-100 text-amber-800 px-2 py-0.5 rounded border border-amber-200">
+                                            TIME: {missionDuration}
                                         </div>
                                     )}
-
-                                    {/* Fragment Indicators */}
-                                    <div className="absolute top-2 left-2 flex gap-1">
-                                        {[0, 1, 2].map(id => (
-                                            <div key={id} className={`w-2 h-2 rounded-full ${collectedFragments.includes(id) ? 'bg-amber-500 shadow-md' : 'bg-slate-300'}`}></div>
-                                        ))}
-                                    </div>
                                 </div>
-
-                                {/* Text / Lore */}
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-center border-b border-slate-200 pb-2">
-                                        <h3 className="text-teal-700 font-mono text-sm">碎片紀錄</h3>
-                                        {endTime && (
-                                            <div className="text-[10px] font-mono bg-amber-100 text-amber-800 px-2 py-0.5 rounded border border-amber-200">
-                                                TOTAL TIME: {missionDuration}
-                                            </div>
+                                
+                                {collectedFragments.length === 0 ? (
+                                    <div className="text-center py-10 bg-slate-50 border-2 border-dashed border-slate-200 rounded-lg">
+                                        <Lock className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                                        <p className="text-slate-400 text-sm font-mono italic">尚未收集到資料。<br/>請開始實地調查。</p>
+                                    </div>
+                                ) : (
+                                    <ul className="space-y-4">
+                                        {collectedFragments.includes(0) && (
+                                            <li className="bg-teal-50 p-4 rounded-lg border-l-4 border-teal-500 shadow-sm animate-in slide-in-from-right duration-300">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <div className="text-xs text-teal-700 font-bold font-mono">FRAGMENT #01</div>
+                                                    <CheckCircle className="w-4 h-4 text-teal-500" />
+                                                </div>
+                                                <p className="text-sm text-slate-700 leading-relaxed italic">"The four beasts guard the valley. Their peaks form a natural basin..."</p>
+                                            </li>
                                         )}
-                                    </div>
-                                    
-                                    {collectedFragments.length === 0 ? (
-                                        <p className="text-slate-400 text-sm font-mono italic">尚未收集到資料。請開始實地調查。</p>
-                                    ) : (
-                                        <ul className="space-y-3">
-                                            {collectedFragments.includes(0) && (
-                                                <li className="bg-teal-50 p-3 rounded border-l-4 border-teal-500 animate-in slide-in-from-right duration-300">
-                                                    <div className="text-xs text-teal-700 font-bold mb-1">FRAGMENT #01</div>
-                                                    <p className="text-sm text-slate-700">"The four beasts guard the valley. Their peaks form a natural basin..."</p>
-                                                </li>
-                                            )}
-                                            {collectedFragments.includes(1) && (
-                                                <li className="bg-amber-50 p-3 rounded border-l-4 border-amber-500 animate-in slide-in-from-right duration-500">
-                                                    <div className="text-xs text-amber-700 font-bold mb-1">FRAGMENT #02</div>
-                                                    <p className="text-sm text-slate-700">"The Nangang sandstone layers reveal a shallow marine past. Feather-like patterns suggest ancient currents."</p>
-                                                </li>
-                                            )}
-                                            {collectedFragments.includes(2) && (
-                                                <li className="bg-purple-50 p-3 rounded border-l-4 border-purple-500 animate-in slide-in-from-right duration-700">
-                                                    <div className="text-xs text-purple-700 font-bold mb-1">FRAGMENT #03</div>
-                                                    <p className="text-sm text-slate-700">"Steep slopes protect the hidden reservoir. The ridges tell the story of collision."</p>
-                                                </li>
-                                            )}
-                                        </ul>
-                                    )}
-                                    
-                                    {collectedFragments.length === 3 && (
-                                        <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded text-amber-800 text-sm font-mono animate-pulse shadow-sm">
-                                            &gt;&gt; COMPLETE DATASET ACQUIRED. 
-                                            <br/>&gt;&gt; HISTORICAL RECONSTRUCTION AVAILABLE.
+                                        {collectedFragments.includes(1) && (
+                                            <li className="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500 shadow-sm animate-in slide-in-from-right duration-500">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <div className="text-xs text-amber-700 font-bold font-mono">FRAGMENT #02</div>
+                                                    <CheckCircle className="w-4 h-4 text-amber-500" />
+                                                </div>
+                                                <p className="text-sm text-slate-700 leading-relaxed italic">"The Nangang sandstone layers reveal a shallow marine past. Feather-like patterns suggest ancient currents."</p>
+                                            </li>
+                                        )}
+                                        {collectedFragments.includes(2) && (
+                                            <li className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500 shadow-sm animate-in slide-in-from-right duration-700">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <div className="text-xs text-purple-700 font-bold font-mono">FRAGMENT #03</div>
+                                                    <CheckCircle className="w-4 h-4 text-purple-500" />
+                                                </div>
+                                                <p className="text-sm text-slate-700 leading-relaxed italic">"Steep slopes protect the hidden reservoir. The ridges tell the story of collision."</p>
+                                            </li>
+                                        )}
+                                    </ul>
+                                )}
+                                
+                                {collectedFragments.length === 3 && (
+                                    <div className="mt-8 pt-6 border-t border-dashed border-slate-300">
+                                        <div className="bg-amber-50 p-5 rounded-xl border border-amber-200 text-center animate-in fade-in slide-in-from-bottom-4 shadow-sm">
+                                            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-amber-500">
+                                                <Trophy className="w-6 h-6" />
+                                            </div>
+                                            <div className="text-sm text-amber-800 font-mono font-bold mb-1">
+                                                COMPLETE DATASET ACQUIRED
+                                            </div>
+                                            <p className="text-xs text-amber-700/70 mb-4">
+                                                Historical reconstruction available.
+                                            </p>
+                                            <a 
+                                                href="https://drive.google.com/file/d/1Gs8D2-eMawBA3iUWerCwiDhBlbmlOQ-e/view?usp=sharing"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="block w-full bg-amber-600 hover:bg-amber-500 text-white py-3 rounded-lg font-mono font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all hover:shadow-amber-500/30 group"
+                                            >
+                                                <ExternalLink className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                                <span>開啟高解析原圖 (FULL MAP)</span>
+                                            </a>
                                         </div>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
                          </div>
                     </div>

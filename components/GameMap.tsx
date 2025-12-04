@@ -230,10 +230,10 @@ export const GameMap: React.FC<GameMapProps> = ({ puzzles, onPuzzleSelect, fogEn
     });
 
     const LANDMARKS = [
-      { name: '虎山', height: 138, lat: 25.031571054733273, lng: 121.58361867008533 },
+      { name: '虎山', height: 142, lat: 25.031571054733273, lng: 121.58361867008533 },
       { name: '豹山', height: 141, lat: 25.029558090580725, lng: 121.582654871389 },
-      { name: '獅山', height: 151, lat: 25.026732268016207, lng: 121.58067762839389 },
-      { name: '象山', height: 183, lat: 25.02788330197117, lng: 121.5762413424949 }
+      { name: '獅山', height: 150, lat: 25.026732268016207, lng: 121.58067762839389 },
+      { name: '象山', height: 184, lat: 25.02788330197117, lng: 121.5762413424949 }
     ];
 
     LANDMARKS.forEach(lm => {

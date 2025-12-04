@@ -79,7 +79,7 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ onStart, onContinue, h
                 {/* Card Body - Scrollable Text */}
                 <div className="flex-1 overflow-y-auto p-6 pt-4 space-y-4 text-slate-600 font-sans leading-relaxed text-base text-justify scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
                     <p>
-                        村長在整理古老村史時，意外翻到一張泛黃的永春陂老照片。照片裡的山形、地貌、濕地樣貌都與現在不太相同，但卻看起來非常重要。
+                        村長在整理古老村史時，意外翻到一張泛黃的永春陂老照片(請點擊右上角)。照片裡的山形、地貌、濕地樣貌都與現在不太相同，但卻看起來非常重要。
                     </p>
                     <p>
                         為了破解照片中的線索，村長召集了全村最聰明、最勇敢的 <strong className="text-teal-600">小小地質學家</strong> 前往實地調查。
