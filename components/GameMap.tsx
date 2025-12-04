@@ -120,8 +120,8 @@ export const GameMap: React.FC<GameMapProps> = ({ puzzles, onPuzzleSelect, fogEn
   const URL_GEOMAP = "https://geomap.gsmma.gov.tw/gwh/gsb97-1/sys8a/t3/index1.cfm";
   const URL_MAPY = "https://mapy.com/en/zakladni?l=0&x=121.6019818&y=25.0414134&z=14";
 
-  const DEFAULT_LAT = 25.032647;
-  const DEFAULT_LNG = 121.580098;
+  const DEFAULT_LAT = 25.031546843359315;
+  const DEFAULT_LNG = 121.57944711977618;
 
   // Handle Device Orientation for User Marker Arrow
   useEffect(() => {

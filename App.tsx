@@ -111,7 +111,7 @@ const INITIAL_STATS: PlayerStats = {
 };
 
 // Yongchun Pi Map - Unlocked after 3 fragments
-const TREASURE_MAP_IMAGE = "./yongchun_map.jpg";
+const TREASURE_MAP_IMAGE = "https://drive.google.com/uc?export=view&id=1Gs8D2-eMawBA3iUWerCwiDhBlbmlOQ-e";
 
 const TUTORIAL_STEPS = [
     {
